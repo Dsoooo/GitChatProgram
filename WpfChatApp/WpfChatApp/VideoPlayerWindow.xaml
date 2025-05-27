@@ -1,0 +1,40 @@
+﻿<Window x:Class="WpfChatApp.VideoPlayerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfChatApp"
+        mc:Ignorable="d"
+        Title="동영상 플레이어" Height="400" Width="600" Icon="/Resources/Chat_Icon.png">
+    <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <MediaElement x:Name="mediaPlayer"
+                          Grid.Row="0"
+                          LoadedBehavior="Manual"
+                          UnloadedBehavior="Stop"
+                          Stretch="Uniform"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          MediaOpened="MediaPlayer_MediaOpened"/>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center">
+                <Button Content="▶" Width="60" Height="30" Margin="5" FontSize="16"
+                        Background="#C40000" Foreground="White" BorderThickness="0"
+                        Click="Play_Click" Cursor="Hand"/>
+                <Button Content="⏸" Width="60" Height="30" Margin="5" FontSize="16"
+                        Background="Black" Foreground="White" BorderThickness="0"
+                        Click="Pause_Click" Cursor="Hand"/>
+                <Slider x:Name="progressSlider" Width="400" Height="20" Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        PreviewMouseLeftButtonDown="ProgressSlider_PreviewMouseLeftButtonDown"
+                        PreviewMouseLeftButtonUp="ProgressSlider_PreviewMouseLeftButtonUp"/>
+                
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

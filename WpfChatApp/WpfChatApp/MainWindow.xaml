@@ -1,0 +1,350 @@
+﻿<Window x:Class="WpfChatApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfChatApp"
+        mc:Ignorable="d"
+        Closing="Window_Closing"
+        xmlns:vm="clr-namespace:WpfChatApp.ViewModel"
+        Title="톱텍 메신저" Height="450" Width="410" MinHeight="450" MinWidth="410" Icon="/Resources/Chat_Icon.png">
+    <!--<Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>-->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <!-- 원래 내용 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 버전 -->
+        </Grid.RowDefinitions>
+
+        <TabControl Grid.Row="0" TabStripPlacement="Left" Margin="5" Background="White" BorderThickness="0" BorderBrush="#000" SelectedIndex="1">
+            <TabControl.Resources>
+                <!-- 선택된 TabItem 스타일 -->
+                <Style TargetType="TabItem">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#C40000"/>
+                    <Setter Property="BorderThickness" Value="0 0 2 0"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#FFF5F5"/>
+                            <Setter Property="Foreground" Value="#C40000"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+            <!-- 사용자 탭 -->
+            <TabItem Header="👥 사용자" Height="40" BorderBrush="#CCC" BorderThickness="1">
+                <Border BorderBrush="#333" BorderThickness="1">
+                    <Grid Background="#fff" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="사용자 목록" Grid.Column="0" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Foreground="Black"/>
+                                <!-- 사용자 검색 영역 -->
+                                <Border Grid.Column="1" Height="auto" BorderBrush="#CCC" BorderThickness="1" CornerRadius="12" Background="White" Padding="5 0 0 0" VerticalAlignment="Top">
+                                    <Grid Width="180" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="🔍" Foreground="Black" FontSize="16" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                        <!-- 검색 텍스트박스 -->
+                                        <TextBox
+                                                Name="SearchTextBox"
+                                                Grid.Column="1"
+                                                Width="120"
+                                                BorderBrush="White"
+                                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                VerticalContentAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                FontSize="14"        
+                                                FocusVisualStyle="{x:Null}"
+                                                Padding="5,0,25,0"  BorderThickness="1" Height="22"/>
+
+                                        <Button Content="✕"
+                                            Grid.Column="2"
+                                            Click="ClearSearchText_Click"
+                                            Width="20"
+                                            Height="20"
+                                            FontSize="12"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,5,0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Cursor="Hand"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+
+                        <ListBox Name="UserListBox"
+                                     Grid.Row="1"
+                                     ItemsSource="{Binding AllUsers}"
+                                     BorderBrush="#CCC"
+                                     BorderThickness="1"
+                                     FontSize="14"                                                                                
+                                     SelectionMode="Extended"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     MouseDoubleClick="UserListBox_MouseDoubleClick">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="5" VerticalAlignment="Center">
+                                        <Grid Width="30" Height="30">
+                                            <Viewbox Stretch="UniformToFill">
+                                                <Image Source="/Resources/profile_icon.png"
+                                                       Width="30" Height="30"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
+                                            </Viewbox>
+                                            <Grid.Clip>
+                                                <EllipseGeometry Center="15,15" RadiusX="15" RadiusY="12"/>
+                                            </Grid.Clip>
+                                        </Grid>
+
+                                        <TextBlock Text="{Binding Nickname}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </StackPanel>
+
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <!-- 테두리 및 선택 강조 스타일 -->
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Margin" Value="0,0,0,1"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Height" Value="40"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="BorderBrush" Value="#888"/>
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="BorderBrush" Value="#C40000"/>
+                                            <!-- 선택 시 빨간 테두리 -->
+                                            <Setter Property="Background" Value="#FFF5F5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+
+
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- 채팅 탭 -->
+            <TabItem Header="💬 채팅" Height="40" BorderBrush="#CCC" BorderThickness="1">
+                <Border BorderBrush="#333" BorderThickness="1">
+                    <Grid Background="#fff" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Margin="0 0 0 10" Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="채팅 목록" Foreground="Black" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Left"/>
+
+                            <Button Grid.Column="2"
+                                            Click="CreateChatRoom_Click"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="#C40000" Foreground="White"
+                                            Content="➕새 채팅"                                                                             
+                                            BorderThickness="0"
+                                            Padding="8,4"
+                                            Cursor="Hand">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="15"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+
+                        <ListBox Name="ChatListBox"
+                                     Grid.Row="1"
+                                    ItemsSource="{Binding ChatRooms}"
+                                    SelectedItem="{Binding SelectedRoom}"
+                                    MouseDoubleClick="ChatRoomListBox_MouseDoubleClick"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    BorderBrush="#CCC" BorderThickness="1">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="5">
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,40,0">
+                                            <TextBlock Text="{Binding RoomName}" FontWeight="Bold"
+                                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding RoomName}" TextWrapping="NoWrap"/>
+                                            <TextBlock Text="{Binding LastMessage}" FontSize="11" Foreground="Gray" 
+                                                       TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                        </StackPanel>
+
+                                                            <!-- 오른쪽 끝 -->
+                                        <Border Background="Red"
+                                            CornerRadius="10"
+                                            Padding="4,1"
+                                            MinWidth="20"
+                                            Height="18"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="10,0,10,0"
+                                            Visibility="{Binding UnReadCount, Converter={StaticResource UnReadToVisibility}}">
+                                            <TextBlock Text="{Binding UnReadCount}"
+                                                                           Foreground="White"
+                                                                           FontWeight="Bold"
+                                                                           FontSize="10"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center"/>
+
+
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="채팅방 열기" Click="OpenChatRoom_Click"/>
+                                    <MenuItem Header="채팅방 나가기" Click="LeaveChatRoom_Click"/>
+
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+
+                            <!-- 테두리 및 선택 강조 스타일 -->
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Margin" Value="0,0,0,1"/>
+                                    <Setter Property="Padding" Value="0"/>
+
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="BorderBrush" Value="#888"/>
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="BorderBrush" Value="#C40000"/>
+                                            <!-- 선택 시 빨간 테두리 -->
+                                            <Setter Property="Background" Value="#FFF5F5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- 설정 탭 -->
+            <TabItem Header="⚙ 설정" Height="40">
+                <Border BorderBrush="#333" BorderThickness="1">
+                    <Grid Background="#fff" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="내 정보" FontWeight="Bold" FontSize="16" Margin="5" Foreground="Black"/>
+
+                        <Border BorderBrush="#CCC" BorderThickness="1" CornerRadius="8" Margin="5 40 5 10 " Padding="20" Background="White" Grid.Row="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                                    <TextBlock Text="이름 : " Foreground="Black"/>
+                                    <TextBlock Text="{Binding UserInfo.Name}" Foreground="Black" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                    <TextBlock Text="아이디 : " Foreground="Black"/>
+                                    <TextBlock Text="{Binding UserInfo.Id}" Foreground="Black" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                    <TextBlock Text="닉네임 : " Foreground="Black"/>
+                                    <!--<TextBlock Text="{Binding UserInfo.Nickname}" Foreground="Black" FontWeight="SemiBold" Margin="0,0,0,10"/>-->
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+
+                                        <Grid>
+
+                                            <TextBlock x:Name="NickTextBlock" Foreground="Gray"
+                                                   Width="130"
+                                                        Text="{Binding UserInfo.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Margin="0,0,10,0"
+                                                        IsHitTestVisible="False" Panel.ZIndex="1"/>
+                                            <TextBox x:Name="NickTextBox"
+                                                            Width="130"
+                                                            Text="{Binding UserInfo.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                            Margin="0,0,10,0"
+                                                            Visibility="Collapsed"
+                                                            VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <Button Content="변경"
+                                                Name="BtnNickName"
+                                                Width="60"
+                                                Click="ChangeNickName_Clck"
+                                                Background="#C40000"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                Cursor="Hand"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Grid Background="#FAFAFA" Margin="5" Grid.Row="1">
+                            <StackPanel>
+                                <Button Content="로그아웃" Click="Logout_Click"
+                                        Width="100" Height="35" Background="Black"
+                                        Foreground="White" BorderThickness="0" Cursor="Hand"/>
+
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <!-- 버전 정보 -->
+            <TextBlock Grid.Row="1"
+               Text="ver. 25.5.23"
+               HorizontalAlignment="Left"
+               FontSize="10"
+               Foreground="Gray"
+               Margin="10,0,10,5"/>
+        </Grid>
+    </Grid>
+
+</Window>

@@ -1,0 +1,19 @@
+﻿<Window x:Class="WpfChatApp.ImageViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfChatApp"
+        mc:Ignorable="d"
+        Title="이미지뷰어" Height="600" Width="800"
+        KeyDown="Window_KeyDown"
+        Focusable="True"
+        Loaded="Window_Loaded" Icon="/Resources/Chat_Icon.png">
+
+    <Grid>
+        <!-- Viewbox가 자동으로 컨텐츠 크기 맞춰줌 -->
+        <Viewbox Stretch="Uniform">
+            <Image x:Name="BigImage" />
+        </Viewbox>
+    </Grid>
+</Window>
